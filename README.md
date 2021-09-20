@@ -5,7 +5,7 @@
 
 Instructions how to use this blocks
 
-### Ultrasonic sensor #HacedoresultrasonicSensor
+### Ultrasonic sensor #Hacedores-ultrasonicSensor
 
 Calculate the distance either centimeters or inches from HC-RS04 sensor to any object
 
@@ -38,6 +38,10 @@ This image shows the blocks code from the last commit in master.
 This image may take a few minutes to refresh.
 
 ![A rendered view of the blocks](https://github.com/hacedorescom/Hacedores/raw/master/.github/makecode/blocks.png)
+
+## License
+
+MIT
 
 #### Metadata (used for search, rendering)
 
