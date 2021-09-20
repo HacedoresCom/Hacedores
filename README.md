@@ -1,11 +1,11 @@
 
-> Open this page at [https://hacedorescom.github.io/hacedores/](https://hacedorescom.github.io/hacedores/)
+> Open this page at [https://hacedorescom.github.io/Hacedores/](https://hacedorescom.github.io/Hacedores/)
 
 ## Usage
 
 Instructions how to use this blocks
 
-### Ultrasonic sensor #Hacedores
+### Ultrasonic sensor #HacedoresultrasonicSensor
 
 Calculate the distance either centimeters or inches from HC-RS04 sensor to any object
 
@@ -22,22 +22,22 @@ This repository can be added as an **extension** in MakeCode.
 * open [https://makecode.microbit.org/](https://makecode.microbit.org/)
 * click on **New Project**
 * click on **Extensions** under the gearwheel menu
-* search for **https://github.com/hacedorescom/hacedores** and import
+* search for **https://github.com/hacedorescom/Hacedores** or **Hacedores** and import
 
-## Edit this project ![Build status badge](https://github.com/hacedorescom/hacedores/workflows/MakeCode/badge.svg)
+## Edit this project ![Build status badge](https://github.com/hacedorescom/Hacedores/workflows/MakeCode/badge.svg)
 
 To edit this repository in MakeCode.
 
 * open [https://makecode.microbit.org/](https://makecode.microbit.org/)
 * click on **Import** then click on **Import URL**
-* paste **https://github.com/hacedorescom/hacedores** and click import
+* paste **https://github.com/hacedorescom/Hacedores** and click import
 
 ## Blocks preview
 
 This image shows the blocks code from the last commit in master.
 This image may take a few minutes to refresh.
 
-![A rendered view of the blocks](https://github.com/hacedorescom/hacedores/raw/master/.github/makecode/blocks.png)
+![A rendered view of the blocks](https://github.com/hacedorescom/Hacedores/raw/master/.github/makecode/blocks.png)
 
 #### Metadata (used for search, rendering)
 
