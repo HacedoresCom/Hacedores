@@ -18,7 +18,7 @@ namespace Hacedores {
      * Send a trigger singnal and receive an echo signal to calculate distances
      * to any objects in centimeters or inches
      */
-    //% block="HC-RS04 trigger %trigger|echo %echo|unit %unit"
+    //% block="HC-SR04 trigger %trigger|echo %echo|unit %unit"
     export function ultrasonicSensor(trigger: DigitalPin, echo: DigitalPin, unit: UltrasonicUnits, maxDistance = 400): number {
         // Sending a pulse
         pins.setPull(trigger, PinPullMode.PullNone);

@@ -7,7 +7,7 @@ Instructions how to use this blocks
 
 ### Ultrasonic sensor #Hacedores-ultrasonicSensor
 
-Calculate the distance either centimeters or inches from HC-RS04 sensor to any object
+Calculate the distance either centimeters or inches from HC-SR04 sensor to any object
 
 ```blocks
 Hacedores.ultrasonicSensor(DigitalPin.P0
@@ -22,15 +22,7 @@ This repository can be added as an **extension** in MakeCode.
 * open [https://makecode.microbit.org/](https://makecode.microbit.org/)
 * click on **New Project**
 * click on **Extensions** under the gearwheel menu
-* search for **https://github.com/hacedorescom/Hacedores** or **Hacedores** and import
-
-## Edit this project ![Build status badge](https://github.com/hacedorescom/Hacedores/workflows/MakeCode/badge.svg)
-
-To edit this repository in MakeCode.
-
-* open [https://makecode.microbit.org/](https://makecode.microbit.org/)
-* click on **Import** then click on **Import URL**
-* paste **https://github.com/hacedorescom/Hacedores** and click import
+* search for **https://github.com/hacedorescom/Hacedores** and import
 
 ## Blocks preview
 
