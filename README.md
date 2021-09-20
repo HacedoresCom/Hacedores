@@ -9,10 +9,12 @@ Instructions how to use this blocks
 
 Calculate the distance either centimeters or inches from HC-SR04 sensor to any object
 
-```blocks
-Hacedores.ultrasonicSensor(DigitalPin.P0
+```sig
+Hacedores.ultrasonicSensor(
+        DigitalPin.P0,
         DigitalPin.P1,
-        UltrasonicUnits.Centimeters)
+        UltrasonicUnits.Centimeters
+    )
 ```
 
 ## Use as Extension
