@@ -1,5 +1,5 @@
 {
-    "name": "HC-SR04",
+    "name": "Hacedores",
     "version": "0.0.1",
     "description": "",
     "dependencies": {
@@ -23,5 +23,5 @@
     "supportedTargets": [
         "microbit"
     ],
-    "preferredEditor": "tsprj"
+    "preferredEditor": "blocksprj"
 }
