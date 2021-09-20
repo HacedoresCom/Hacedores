@@ -5,12 +5,12 @@
 
 Instructions how to use this blocks
 
-### Ultrasonic sensor #Hacedores-ultrasonicSensor
+### Ultrasonic sensor #hacedores-ultrasonicSensor
 
 Calculate the distance either centimeters or inches from HC-SR04 sensor to any object
 
 ```sig
-Hacedores.ultrasonicSensor(
+hacedores.ultrasonicSensor(
         DigitalPin.P0,
         DigitalPin.P1,
         UltrasonicUnits.Centimeters

@@ -13,7 +13,7 @@ enum UltrasonicUnits {
  */
 
 //% color="#390099" weight=80 icon="\uf0ad"
-namespace Hacedores {
+namespace hacedores {
     /**
      * Send a trigger singnal and receive an echo signal to calculate distances
      * to any objects in centimeters or inches

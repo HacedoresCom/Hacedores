@@ -1,6 +1,6 @@
 let distance = 0
 basic.forever(function () {
-    distance = Hacedores.ultrasonicSensor(
+    distance = hacedores.ultrasonicSensor(
     DigitalPin.P0,
     DigitalPin.P1,
     UltrasonicUnits.Centimeters
