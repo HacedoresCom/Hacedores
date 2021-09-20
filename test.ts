@@ -2,7 +2,7 @@
 basic.forever(function () {
     let distance = Hacedores.ultrasonicSensor(
         DigitalPin.P0,
-        DigitalPin.P0,
+        DigitalPin.P1,
         UltrasonicUnits.Centimeters
     )
     basic.showNumber(distance)
