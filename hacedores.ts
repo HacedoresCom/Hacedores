@@ -193,5 +193,25 @@ namespace hacedores {
         export function pause(): Buffer {
             return composeSerialCommand(CommandCode.PAUSE, 0x00, 0x00);
         }
+
+        export function stop(): Buffer {
+            return composeSerialCommand(CommandCode.STOP, 0x00, 0x00);
+        }
+
+        export function playTrackFromFolder(track: number, folder: number): Buffer {
+            return composeSerialCommand(CommandCode.PLAY_TRACK_FROM_FOLDER, folder, track);
+        }
+
+        export function repeatFolder(folder: number): Buffer {
+            return composeSerialCommand(CommandCode.REPEAT_FOLDER, folder, 0x02);
+        }
+
+        export function mute(): Buffer {
+            return composeSerialCommand(CommandCode.MUTE, 0x00, 0x01);
+        }
+
+        export function unmute(): Buffer {
+            return composeSerialCommand(CommandCode.MUTE, 0x00, 0x00);
+        }
     }
 }
