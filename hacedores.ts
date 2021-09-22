@@ -85,11 +85,12 @@ namespace hacedores {
             volume: 15,
             isPlaying: false
         }
-        //send command to select device. Define function for this
+
         basic.pause(500);
-        //send command to stop music. Define function for this
+        sendCommand(MP3Command.selectDevice());
         basic.pause(500);
-        //send command to set volume
+        sendCommand(MP3Command.stop());
+        basic.pause(500);
     }
 
     /**
