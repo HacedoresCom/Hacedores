@@ -152,5 +152,21 @@ namespace hacedores {
             commandBuffer.setNumber(NumberFormat.UInt8LE, 6, dataLow);
             return commandBuffer;
         }
+
+        export function nextTrack(): Buffer {
+            return composeSerialCommand(CommandCode.PLAY_NEXT_TRACK, 0x00, 0x00);
+        }
+
+        export function previousTrack(): Buffer {
+            return composeSerialCommand(CommandCode.PLAY_PREV_TRACK, 0x00, 0x00);
+        }
+
+        export function playTrack(track: number): Buffer {
+            return composeSerialCommand(CommandCode.PLAY_TRACK, 0x00, track);
+        }
+
+        export function increaseVolume(): Buffer {
+            return composeSerialCommand(CommandCode.INCREASE_VOLUME, 0x00, 0x00);
+        }
     }
 }
