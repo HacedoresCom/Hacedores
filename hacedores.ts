@@ -133,6 +133,7 @@ namespace hacedores {
             STOP = 0x16,
             REPEAT_FOLDER = 0x17,
             PLAY_RANDOM = 0x18,
+            MUTE = 0x1a
         }
 
         let commandBuffer: Buffer = undefined;
