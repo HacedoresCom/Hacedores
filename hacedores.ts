@@ -168,5 +168,30 @@ namespace hacedores {
         export function increaseVolume(): Buffer {
             return composeSerialCommand(CommandCode.INCREASE_VOLUME, 0x00, 0x00);
         }
+
+        export function decreaseVolume(): Buffer {
+            return composeSerialCommand(CommandCode.DECREASE_VOLUME, 0x00, 0x00);
+        }
+
+        export function setVolume(volume: number): Buffer {
+            const adjustVolume = Math.min(Math.max(volume, 0), 30);
+            return composeSerialCommand(CommandCode.SET_VOLUME, 0x00, adjustVolume);
+        }
+
+        export function repeatTrack(track: number): Buffer {
+            return composeSerialCommand(CommandCode.REPEAT_TRACK, 0x00, track);
+        }
+
+        export function selectDevice(): Buffer {
+            return composeSerialCommand(CommandCode.SELECT_DEVICE, 0x00, 0x02);
+        }
+
+        export function resume(): Buffer {
+            return composeSerialCommand(CommandCode.RESUME, 0x00, 0x00);
+        }
+
+        export function pause(): Buffer {
+            return composeSerialCommand(CommandCode.PAUSE, 0x00, 0x00);
+        }
     }
 }
