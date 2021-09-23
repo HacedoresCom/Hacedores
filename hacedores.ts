@@ -115,10 +115,11 @@ namespace hacedores {
     export function playMP3TrackFromFolder(track: number, folder: number): void{
         //connectMP3(SerialPin.P0,SerialPin.P1)
 
-       deviceState.folder = Math.min(Math.max(folder,1),99);
-       deviceState.track = Math.min(Math.max(track,1), 255);
-
-       sendCommand(MP3Command.playTrackFromFolder(track,folder))
+        deviceState.folder = Math.min(Math.max(folder,1),99);
+        deviceState.track = Math.min(Math.max(track,1), 255);
+    
+        basic.pause(500);
+        sendCommand(MP3Command.playTrackFromFolder(track,folder))
     }
 
     /**
@@ -129,29 +130,8 @@ namespace hacedores {
     //%block="play MP3 track %track"
     //%track.min=1 track.max=255
     export function playMP3Track(track: number): void {
+        basic.pause(500);
         sendCommand(MP3Command.playTrack(track))
-    }
-
-    /**
-     * Repeat a track
-     * @param track track index 
-     */
-    //%subcategory="MP3"
-    //%block="repeat MP3 track %track"
-    //%track.min=1 track.max=255
-    export function repeatMP3Track(track: number): void {
-        sendCommand(MP3Command.repeatTrack(track));
-    }
-
-    /**
-     * Repeat a folder
-     * @param folder folder index 
-     */
-    //%subcategory="MP3"
-    //%block="repeat MP3 folder %folder"
-    //%folder.min=1 folder.max=99
-    export function repeatMP3Folder(folder: number): void {
-        sendCommand(MP3Command.repeatFolder(folder));
     }
 
     /**
@@ -171,27 +151,35 @@ namespace hacedores {
     export function runMP3Functions(command: Mp3Command): void {
         switch (command) {
             case Mp3Command.INCREASE_VOLUME:
+                basic.pause(500);
                 sendCommand(MP3Command.increaseVolume());
                 break;
             case Mp3Command.DECREASE_VOLUME:
+                basic.pause(500);
                 sendCommand(MP3Command.decreaseVolume());
                 break;
             case Mp3Command.PLAY_NEXT_TRACK:
+                basic.pause(500);
                 sendCommand(MP3Command.nextTrack());
                 break;
             case Mp3Command.PLAY_PREVIOUS_TRACK:
+                basic.pause(500);
                 sendCommand(MP3Command.previousTrack());
                 break;
             case Mp3Command.STOP:
+                basic.pause(500);
                 sendCommand(MP3Command.stop());
                 break;
             case Mp3Command.RESUME:
+                basic.pause(500);
                 sendCommand(MP3Command.resume());
                 break;
             case Mp3Command.MUTE:
+                basic.pause(500);
                 sendCommand(MP3Command.mute());
                 break;
             case Mp3Command.UNMUTE:
+                basic.pause(500);
                 sendCommand(MP3Command.unmute());
                 break;
         }
@@ -208,6 +196,7 @@ namespace hacedores {
         if (volume < 0 || volume > 30) {
             basic.showString("Value not valid")
         } else {
+            basic.pause(500);
             sendCommand(MP3Command.setVolume(volume))
         }
     }
