@@ -220,8 +220,8 @@ namespace hacedores {
             REPEAT_TRACK = 0x08,
             SELECT_DEVICE = 0x09,
             RESET = 0x0C,
-            RESUME = 0x0D,
-            PAUSE = 0x0E,
+            RESUME = 0x0d,
+            PAUSE = 0x0e,
             PLAY_TRACK_FROM_FOLDER = 0x0F,
             STOP = 0x16,
             REPEAT_FOLDER = 0x17,
@@ -283,7 +283,7 @@ namespace hacedores {
         }
 
         export function pause(): Buffer {
-            return composeSerialCommand(CommandCode.PAUSE, 0x00, 0x00);
+            return composeSerialCommand(CommandCode.PAUSE, 0x00, 0x01);
         }
 
         export function stop(): Buffer {
