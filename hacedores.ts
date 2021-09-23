@@ -34,6 +34,7 @@ const enum Mp3Command {
 
 //% color="#390099" weight=80 icon="\uf0ad"
 //% category="Hacedores"
+
 namespace hacedores {
 
     /**
@@ -185,7 +186,7 @@ namespace hacedores {
      */
     //%subcategory="MP3"
     //%block="set MP3 volume to %volume"
-    //%volume.min = 0 volume.max = 1
+    //%volume.min = 0 volume.max = 30
     export function setMP3Volume(volume: number): void {
         basic.pause(500);
         sendCommand(MP3Command.setVolume(volume))
