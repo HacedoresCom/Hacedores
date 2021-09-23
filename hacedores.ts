@@ -121,7 +121,7 @@ namespace hacedores {
         deviceState.track = Math.min(Math.max(track,1), 255);
     
         basic.pause(500);
-        sendCommand(MP3Command.playTrackFromFolder(track,folder))
+        sendCommand(MP3Command.playTrackFromFolder(track,folder));
     }
 
     /**
@@ -133,7 +133,7 @@ namespace hacedores {
     //%track.min=1 track.max=255
     export function playMP3Track(track: number): void {
         basic.pause(500);
-        sendCommand(MP3Command.playTrack(track))
+        sendCommand(MP3Command.playTrack(track));
     }
 
     /**
@@ -145,7 +145,7 @@ namespace hacedores {
     //%volume.min=0 volume.max=30
     export function setMP3Volume(volume: number): void {
         basic.pause(500);
-        sendCommand(MP3Command.setVolume(volume))
+        sendCommand(MP3Command.setVolume(volume));
     }
 
     /**
@@ -203,7 +203,6 @@ namespace hacedores {
      * Function writes a buffer into serial communication
      * @param command command is a buffer
      */
-
     function sendCommand(command: Buffer): void{
         serial.writeBuffer(command)
     }
