@@ -146,30 +146,30 @@ namespace hacedores {
     //%subcategory="MP3"
     //%block="MP3 functions %command"
     //%track.min=1 track.max=255
-    export function runMP3Functions(command: MP3Command): void {
+    export function runMP3Functions(command: Mp3Command): void {
         switch (command) {
-            case MP3Command.increaseVolume:
+            case Mp3Command.INCREASE_VOLUME:
                 sendCommand(MP3Command.increaseVolume());
                 break;
-            case MP3Command.decreaseVolume:
+            case Mp3Command.DECREASE_VOLUME:
                 sendCommand(MP3Command.decreaseVolume());
                 break;
-            case MP3Command.nextTrack:
+            case Mp3Command.PLAY_NEXT_TRACK:
                 sendCommand(MP3Command.nextTrack());
                 break;
-            case MP3Command.previousTrack:
+            case Mp3Command.PLAY_PREVIOUS_TRACK:
                 sendCommand(MP3Command.previousTrack());
                 break;
-            case MP3Command.stop:
+            case Mp3Command.STOP:
                 sendCommand(MP3Command.stop());
                 break;
-            case MP3Command.resume:
+            case Mp3Command.RESUME:
                 sendCommand(MP3Command.resume());
                 break;
-            case MP3Command.mute:
+            case Mp3Command.MUTE:
                 sendCommand(MP3Command.mute());
                 break;
-            case MP3Command.unmute:
+            case Mp3Command.UNMUTE:
                 sendCommand(MP3Command.unmute());
                 break;
         }
