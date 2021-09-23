@@ -1,3 +1,9 @@
+/***************************************************************************************
+ * MP3 BLOCKS NEEDED TO IMPLEMENT QUERIES TO KNOW THE STATE OF THE DEVICE DUE TO
+ * RESUME OPTIONS DOESN'T WORK. SIMILAR SITUATION OCCURS TO TOHER FUNCTIONS. COMPLETE 
+ * DATASHEET CAN BE CONSULTED IN 
+ * https://github.com/0xcafed00d/yx5300/blob/master/docs/datasheet-translated.html
+ **************************************************************************************/
 
 enum UltrasonicUnits {
     //% block="cm"
