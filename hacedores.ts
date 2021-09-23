@@ -44,12 +44,6 @@ namespace hacedores {
             case UltrasonicUnits.Inches: return Math.idiv(distance, 148);
         }
     }
-
-    // Functions for MP3 Player device
-    const enum PlayMode {
-        Track = 0,
-        Folder = 1,
-    }
     
     // The data high bytes contains the file store (TF is 2).
     // The data low byte contains the playback status: stopped=0, playing=1, paused=2.
@@ -57,7 +51,6 @@ namespace hacedores {
     interface DeviceState {
         track: uint16; //maximum value is 255
         folder: uint8; //maximum value is 127
-        playMode: PlayMode;
         repeat: MP3Repeat;
         maxTrackInFolder: uint8;
         volume: uint8;
@@ -79,7 +72,6 @@ namespace hacedores {
         deviceState = {
             track: 1,
             folder: 1,
-            playMode: PlayMode.Track,
             repeat: MP3Repeat.No,
             maxTrackInFolder: 255,
             volume: 15,
@@ -88,8 +80,6 @@ namespace hacedores {
 
         basic.pause(500);
         sendCommand(MP3Command.selectDevice());
-        basic.pause(500);
-        sendCommand(MP3Command.stop());
         basic.pause(500);
         sendCommand(MP3Command.playTrack(1))
     }
@@ -104,13 +94,43 @@ namespace hacedores {
     //%track.min=1 track.max=255
     //%folder.min=1 folder.max=99
     export function playMP3TrackFromFolder(track: number, folder: number, repeat: MP3Repeat): void{
-        connectMP3(SerialPin.P0,SerialPin.P1)
+        //connectMP3(SerialPin.P0,SerialPin.P1)
 
        deviceState.folder = Math.min(Math.max(folder,1),99);
        deviceState.track = Math.min(Math.max(track,1), 255);
-       deviceState.playMode = PlayMode.Track;
 
-       //sendCommand()
+       sendCommand(MP3Command.playTrackFromFolder(track,folder))
+    }
+
+    /**
+     * Play a track
+     * @param track index
+     */
+    //%subcategory="MP3"
+    //%block="play MP3 track %track"
+    //%track.min=1 track.max=255
+    export function playMP3Track(track: number): void {
+        sendCommand(MP3Command.playTrack(track))
+    }
+
+    /**
+     * Next track 
+     */
+    //%subcategory="MP3"
+    //%block="next MP3 track %track"
+    //%track.min=1 track.max=255
+    export function nextMP3Track(): void {
+        sendCommand(MP3Command.nextTrack())
+    }
+    
+    /**
+     * Previous track 
+     */
+    //%subcategory="MP3"
+    //%block="previous MP3 track %track"
+    //%track.min=1 track.max=255
+    export function previousMP3Track(): void {
+        sendCommand(MP3Command.previousTrack())
     }
 
     function sendCommand(command: Buffer): void{
