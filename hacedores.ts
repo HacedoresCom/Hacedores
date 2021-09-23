@@ -193,12 +193,8 @@ namespace hacedores {
     //%block="set MP3 volume to %volume"
     //%volume.min = 0 volume.max = 1
     export function setMP3Volume(volume: number): void {
-        if (volume < 0 || volume > 30) {
-            basic.showString("Value not valid")
-        } else {
-            basic.pause(500);
-            sendCommand(MP3Command.setVolume(volume))
-        }
+        basic.pause(500);
+        sendCommand(MP3Command.setVolume(volume))
     }
 
     /**
