@@ -6,13 +6,6 @@ enum UltrasonicUnits {
     Inches,
 }
 
-enum MP3Repeat{
-    //%block="once"
-    No = 0,
-    //%block="forever"
-    Forever = 1,
-}
-
 /**
  * Custom blocks made for Hacedores
  * 20-09-21
@@ -51,7 +44,6 @@ namespace hacedores {
     interface DeviceState {
         track: uint16; //maximum value is 255
         folder: uint8; //maximum value is 127
-        repeat: MP3Repeat;
         maxTrackInFolder: uint8;
         volume: uint8;
         isPlaying: boolean;
@@ -72,7 +64,6 @@ namespace hacedores {
         deviceState = {
             track: 1,
             folder: 1,
-            repeat: MP3Repeat.No,
             maxTrackInFolder: 255,
             volume: 15,
             isPlaying: false
@@ -93,7 +84,7 @@ namespace hacedores {
     //%block="play MP3 track %track | from folder %folder | %repeat"
     //%track.min=1 track.max=255
     //%folder.min=1 folder.max=99
-    export function playMP3TrackFromFolder(track: number, folder: number, repeat: MP3Repeat): void{
+    export function playMP3TrackFromFolder(track: number, folder: number): void{
         //connectMP3(SerialPin.P0,SerialPin.P1)
 
        deviceState.folder = Math.min(Math.max(folder,1),99);
