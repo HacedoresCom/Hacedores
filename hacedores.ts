@@ -137,6 +137,18 @@ namespace hacedores {
     }
 
     /**
+     * Sets the volume
+     * @param volume is in the range of 0 to 30
+     */
+    //%subcategory="MP3"
+    //%block="set MP3 volume to %volume"
+    //%volume.min=0 volume.max=30
+    export function setMP3Volume(volume: number): void {
+        basic.pause(500);
+        sendCommand(MP3Command.setVolume(volume))
+    }
+
+    /**
      * Sets of important functions to interact with the tracks MP3
      * @param increase volume to set up the volume
      * @param decrease volume to set down the volume
@@ -188,18 +200,6 @@ namespace hacedores {
     }
 
     /**
-     * Sets the volume
-     * @param volume is in the range of 0 to 30
-     */
-    //%subcategory="MP3"
-    //%block="set MP3 volume to %volume"
-    //%volume.min = 0 volume.max = 30
-    export function setMP3Volume(volume: number): void {
-        basic.pause(500);
-        sendCommand(MP3Command.setVolume(volume))
-    }
-
-    /**
      * Function writes a buffer into serial communication
      * @param command command is a buffer
      */
@@ -219,13 +219,13 @@ namespace hacedores {
             SET_VOLUME = 0x06,
             REPEAT_TRACK = 0x08,
             SELECT_DEVICE = 0x09,
-            RESET = 0x0c,
-            RESUME = 0x0d,
-            PAUSE = 0x0e,
-            PLAY_TRACK_FROM_FOLDER = 0x0f,
+            RESET = 0x0C,
+            RESUME = 0x0D,
+            PAUSE = 0x0E,
+            PLAY_TRACK_FROM_FOLDER = 0x0F,
             STOP = 0x16,
             REPEAT_FOLDER = 0x17,
-            MUTE = 0x1a
+            MUTE = 0x1A,
         }
 
         let commandBuffer: Buffer = undefined;
