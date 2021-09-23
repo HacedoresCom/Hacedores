@@ -14,6 +14,10 @@ enum UltrasonicUnits {
 //% color="#390099" weight=80 icon="\uf0ad"
 //% category="Hacedores"
 namespace hacedores {
+
+    /***************************************************************************************
+     * BLOCK TO COMMUNICATE WITH THE HC-SR04 ULTRASONIC MODULE
+     ***************************************************************************************
     /**
      * Send a trigger singnal and receive an echo signal to calculate distances
      * to any objects in centimeters or inches
@@ -38,6 +42,9 @@ namespace hacedores {
         }
     }
     
+    /***************************************************************************************
+     *  BLOCKS TO COMMUNICATE WITH THE YX5300 MP3 DEVICE. ONLY SEND COMMANDS, NOT RECEIVE
+     ***************************************************************************************/
     // The data high bytes contains the file store (TF is 2).
     // The data low byte contains the playback status: stopped=0, playing=1, paused=2.
 
@@ -71,8 +78,8 @@ namespace hacedores {
 
         basic.pause(500);
         sendCommand(MP3Command.selectDevice());
-        basic.pause(500);
-        sendCommand(MP3Command.playTrack(1))
+        //basic.pause(500);
+        //sendCommand(MP3Command.playTrack(1))
     }
 
     /**
@@ -105,24 +112,67 @@ namespace hacedores {
     }
 
     /**
-     * Next track 
+     * Sets of important functions to interact with the tracks MP3
+     * @param increase volume to set up the volume
+     * @param decrease volume to set down the volume
+     * @param next track to play the next track
+     * @param previous track to play the previous track
+     * @param stop to stop the track
+     * @param resume to resume the track
+     * @param mute to mute the track
+     * @param unmute to unmute the track
      */
     //%subcategory="MP3"
-    //%block="next MP3 track %track"
+    //%block="MP3 functions %command"
     //%track.min=1 track.max=255
-    export function nextMP3Track(): void {
-        sendCommand(MP3Command.nextTrack())
+    export function runMP3Functions(command: MP3Command): void {
+        switch (command) {
+            case MP3Command.increaseVolume:
+                sendCommand(MP3Command.increaseVolume());
+                break;
+            case MP3Command.decreaseVolume:
+                sendCommand(MP3Command.decreaseVolume());
+                break;
+            case MP3Command.nextTrack:
+                sendCommand(MP3Command.nextTrack());
+                break;
+            case MP3Command.previousTrack:
+                sendCommand(MP3Command.previousTrack());
+                break;
+            case MP3Command.stop:
+                sendCommand(MP3Command.stop());
+                break;
+            case MP3Command.resume:
+                sendCommand(MP3Command.resume());
+                break;
+            case MP3Command.mute:
+                sendCommand(MP3Command.mute());
+                break;
+            case MP3Command.unmute:
+                sendCommand(MP3Command.unmute());
+                break;
+        }
     }
-    
+
     /**
-     * Previous track 
+     * Sets the volume
+     * @param volume is in the range of 0 to 30
      */
     //%subcategory="MP3"
-    //%block="previous MP3 track %track"
-    //%track.min=1 track.max=255
-    export function previousMP3Track(): void {
-        sendCommand(MP3Command.previousTrack())
+    //%block="set MP3 volume to %volume"
+    //%volume.min = 0 volume.max = 1
+    export function setMP3Volume(volume: number): void {
+        if (volume < 0 || volume > 30) {
+            basic.showString("Value not valid")
+        } else {
+            sendCommand(MP3Command.setVolume(volume))
+        }
     }
+
+    /**
+     * Function writes a buffer into serial communication
+     * @param command command is a buffer
+     */
 
     function sendCommand(command: Buffer): void{
         serial.writeBuffer(command)
