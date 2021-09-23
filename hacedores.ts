@@ -37,6 +37,10 @@ const enum Mp3Command {
 
 namespace hacedores {
 
+    /***************************************************************************************
+     * BLOCK TO COMMUNICATE WITH THE HC-SR04 ULTRASONIC MODULE
+     **************************************************************************************/
+
     /**
      * Send a trigger singnal and receive an echo signal to calculate distances
      * to any objects in centimeters or inches
@@ -61,6 +65,9 @@ namespace hacedores {
         }
     }
     
+    /***************************************************************************************
+     *  BLOCKS TO COMMUNICATE WITH THE YX5300 MP3 DEVICE. ONLY SEND COMMANDS, NOT RECEIVE
+     ***************************************************************************************/
     // The data high bytes contains the file store (TF is 2).
     // The data low byte contains the playback status: stopped=0, playing=1, paused=2.
 
