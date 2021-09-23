@@ -91,6 +91,7 @@ namespace hacedores {
         basic.pause(500);
         sendCommand(MP3Command.stop());
         basic.pause(500);
+        sendCommand(MP3Command.playTrack(1))
     }
 
     /**
