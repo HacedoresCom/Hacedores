@@ -7,6 +7,10 @@ enum UltrasonicUnits {
 }
 
 const enum Mp3Command {
+    //% block="repeat track"
+    REPEAT_TRACK,
+    //% block="repeat folder"
+    REPEAT_FOLDER,
     //% block="play next track"
     PLAY_NEXT_TRACK,
     //% block="play previous track"
@@ -160,6 +164,12 @@ namespace hacedores {
             case Mp3Command.PLAY_PREVIOUS_TRACK:
                 sendCommand(MP3Command.previousTrack());
                 break;
+            case Mp3Command.REPEAT_TRACK:
+                sendCommand(MP3Command.repeatTrack);
+                break;
+            case Mp3Command.REPEAT_FOLDER:
+                sendCommand(MP3Command.repeatFolder);
+                break;
             case Mp3Command.STOP:
                 sendCommand(MP3Command.stop());
                 break;
@@ -216,7 +226,6 @@ namespace hacedores {
             PLAY_TRACK_FROM_FOLDER = 0x0f,
             STOP = 0x16,
             REPEAT_FOLDER = 0x17,
-            PLAY_RANDOM = 0x18,
             MUTE = 0x1a
         }
 
