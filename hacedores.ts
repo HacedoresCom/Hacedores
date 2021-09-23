@@ -6,6 +6,27 @@ enum UltrasonicUnits {
     Inches,
 }
 
+const enum Mp3Command {
+    //% block="play next track"
+    PLAY_NEXT_TRACK,
+    //% block="play previous track"
+    PLAY_PREVIOUS_TRACK,
+    //% block="increase volume"
+    INCREASE_VOLUME,
+    //% block="decrease volume"
+    DECREASE_VOLUME,
+    //% block="pause"
+    PAUSE,
+    //% block="resume"
+    RESUME,
+    //% block="stop"
+    STOP,
+    //% block="mute"
+    MUTE,
+    //% block="unmute"
+    UNMUTE,
+}
+
 /**
  * Custom blocks made for Hacedores
  * 20-09-21
