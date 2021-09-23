@@ -7,10 +7,6 @@ enum UltrasonicUnits {
 }
 
 const enum Mp3Command {
-    //% block="repeat track"
-    REPEAT_TRACK,
-    //% block="repeat folder"
-    REPEAT_FOLDER,
     //% block="play next track"
     PLAY_NEXT_TRACK,
     //% block="play previous track"
@@ -137,6 +133,28 @@ namespace hacedores {
     }
 
     /**
+     * Repeat a track
+     * @param track track index 
+     */
+    //%subcategory="MP3"
+    //%block="repeat MP3 track %track"
+    //%track.min=1 track.max=255
+    export function repeatMP3Track(track: number): void {
+        sendCommand(MP3Command.repeatTrack(track));
+    }
+
+    /**
+     * Repeat a folder
+     * @param folder folder index 
+     */
+    //%subcategory="MP3"
+    //%block="repeat MP3 folder %folder"
+    //%folder.min=1 folder.max=99
+    export function repeatMP3Folder(folder: number): void {
+        sendCommand(MP3Command.repeatFolder(folder));
+    }
+
+    /**
      * Sets of important functions to interact with the tracks MP3
      * @param increase volume to set up the volume
      * @param decrease volume to set down the volume
@@ -163,12 +181,6 @@ namespace hacedores {
                 break;
             case Mp3Command.PLAY_PREVIOUS_TRACK:
                 sendCommand(MP3Command.previousTrack());
-                break;
-            case Mp3Command.REPEAT_TRACK:
-                sendCommand(MP3Command.repeatTrack);
-                break;
-            case Mp3Command.REPEAT_FOLDER:
-                sendCommand(MP3Command.repeatFolder);
                 break;
             case Mp3Command.STOP:
                 sendCommand(MP3Command.stop());
