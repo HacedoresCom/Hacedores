@@ -85,7 +85,11 @@ namespace hacedores {
         isPlaying: boolean;
     }
 
-    let deviceState: DeviceState;
+    let deviceState: DeviceState = undefined;
+
+    const TRACK_STARTED_ID = 756;
+    const TRACK_COMPLETED_ID = 757;
+
 
     /**
      * Connect to the serial MP3 device
@@ -205,6 +209,31 @@ namespace hacedores {
         }
     }
 
+    /**********************************************************************************/
+    /*                      MP3's RESPONSE FUNCTIONS                                  */
+    /**********************************************************************************/
+    function readResponseStartMP3(): void{
+        let start = false;
+        while(true){
+            while(serial.available > 0){
+               const byteIndex = serial.read();
+               if(byteIndex == MP3Command.CommandResponse.RESPONSE_START_BYTE){
+                   start = true;
+               } else if(byteIndex == MP3Command.CommandResponse.RESPONSE_VER_BYTE){
+                   return;
+               } else{
+                   start = false;
+               }
+            }
+            basic.pause(200); 
+        }
+    }
+
+    function readSerial(){
+        readSerial.setRxBufferSize(32);
+        
+    }
+
     /**
      * Function writes a buffer into serial communication
      * @param command command is a buffer
@@ -214,6 +243,11 @@ namespace hacedores {
     }
 
     export namespace MP3Command {
+
+        export interface Response {
+            type: CommandResponse;
+            load?: number;
+        }
 
         export const enum CommandCode {
             PLAY_NEXT_TRACK = 0x01,
@@ -225,12 +259,35 @@ namespace hacedores {
             REPEAT_TRACK = 0x08,
             SELECT_DEVICE = 0x09,
             RESET = 0x0C,
-            RESUME = 0x0d,
-            PAUSE = 0x0e,
+            RESUME = 0x0d,                          //Broadcast
+            PAUSE = 0x0e,                           //Time Out
             PLAY_TRACK_FROM_FOLDER = 0x0F,
             STOP = 0x16,
             REPEAT_FOLDER = 0x17,
+            REPEART_CURRENT_TRACK = 0x19,
             MUTE = 0x1A,
+            QUERY_CURRENT_STATUS = 0x42,            //See 3.4.10
+            QUERY_CURRENT_VOLUME = 0x43,
+            QUERY_TRACK = 0x4C,
+            QTOTAL_TRACK_COUNT = 0x48,
+            QFOLDER_TRACK_COUNT = 0x4E,             //See 3.5.2
+            QFOLDER_COUNT = 0x4F,                   //See 3.5.3
+        }
+
+        export const enum CommandResponse {
+            RESPONSE_INVALID = 0x00,
+            RESPONSE_START_BYTE = 0x7E,
+            RESPONSE_VER_BYTE = 0xff,
+            RESPONSE_ENDING_BYTE = 0xef,
+            TF_CARD_INSERT = 0x3a,
+            TRACK_COMPLETED = 0x3d,
+            TRACK_NOT_FOUND = 0x40,
+            ACK = 0x41,
+            PLAYBACK_STATUS = 0x42,
+            VOLUME = 0x43,
+            CURRENT_TRACK = 0x4c,
+            FOLDER_TRACK_COUNT = 0x4e,
+            FOLDER_COUNT = 0x4f,
         }
 
         let commandBuffer: Buffer = undefined;
@@ -249,6 +306,10 @@ namespace hacedores {
             commandBuffer.setNumber(NumberFormat.UInt8LE, 6, dataLow);
             return commandBuffer;
         }
+
+        /**********************************************************************************/
+        /*                         COMMAND FUNCTION CONFIG                                */
+        /**********************************************************************************/
 
         export function nextTrack(): Buffer {
             return composeSerialCommand(CommandCode.PLAY_NEXT_TRACK, 0x00, 0x00);
@@ -310,5 +371,68 @@ namespace hacedores {
         export function unmute(): Buffer {
             return composeSerialCommand(CommandCode.MUTE, 0x00, 0x00);
         }
+
+        export function queryStatus(): Buffer{
+            return composeSerialCommand(CommandCode.QUERY_CURRENT_STATUS, 0x00, 0x00);
+        }
+
+        export function queryVolume(): Buffer{
+            return composeSerialCommand(CommandCode.QUERY_CURRENT_VOLUME, 0x00, 0x00);
+        }
+
+        export function queryTrack(): Buffer{
+            return composeSerialCommand(CommandCode.QUERY_TRACK, 0x00, 0x00);
+        }
+
+        export function queryFolderTrackCount(folder: number): Buffer{
+            return composeSerialCommand(CommandCode.QFOLDER_TRACK_COUNT, 0x00, 0x00);
+        }
+
+        export function queryFolderCount(): Buffer{
+            return  composeSerialCommand(CommandCode.QFOLDER_COUNT, 0x00, 0x00);
+        }
+
+        /**********************************************************************************/
+        /*                    DECODING RESPONSE FUNCTIONS CONFIG                          */
+        /**********************************************************************************/
+
+        export function manageResponse(responseBuffer: Buffer): Response{
+            //Response send by the MP3 is the 10 bytes
+            if(responseBuffer.length != 10){
+                return { type: CommandResponse.RESPONSE_INVALID };
+            }
+
+            if(responseBuffer.getNumber(NumberFormat.UInt8LE, 0) != CommandResponse.RESPONSE_START_BYTE){
+                return { type: CommandResponse.RESPONSE_INVALID};
+            }
+
+            if(responseBuffer.getNumber(NumberFormat.UInt8LE, 1) != CommandResponse.RESPONSE_VER_BYTE){
+                return { type: CommandResponse.RESPONSE_INVALID};
+            }
+
+            if(responseBuffer.getNumber(NumberFormat.UInt8LE, 9) != CommandResponse.RESPONSE_ENDING_BYTE){
+                return { type: CommandResponse.RESPONSE_INVALID};
+            }
+
+            const type = responseBuffer.getNumber(NumberFormat.UInt8LE, 3);
+            const load = (responseBuffer.getNumber(NumberFormat.UInt8LE,5) << 8) | (responseBuffer.getNumber(NumberFormat.UInt8LE,6));
+
+            return {type: type, load: load};
+        }
+
+        /**
+         * Example: If we would like first song play, the MP3 response with:
+         *  7E FF 06 03 00 00 01 FF E6 EF = 10 bits
+         *  7E -- Start command
+         *  FF -- Version information
+         *  06 -- Data length
+         *  03 -- Item selection
+         *  00 -- whether to answer[0x01: need answer, 0x00: not return answer]
+         *  00 -- [DH Track] Remember that track's range is 0-255
+         *  01 -- [DL Track]
+         *  FF -- High byte checksum
+         *  E6 -- Low byte checksum
+         *  EF -- End command
+         */
     }
 }
