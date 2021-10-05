@@ -5,7 +5,7 @@
  * https://github.com/0xcafed00d/yx5300/blob/master/docs/datasheet-translated.html
  **************************************************************************************/
 
-enum UltrasonicUnits {
+ enum UltrasonicUnits {
     //% block="cm"
     Centimeters,
     //% block="inches"
@@ -77,12 +77,21 @@ namespace hacedores {
     // The data high bytes contains the file store (TF is 2).
     // The data low byte contains the playback status: stopped=0, playing=1, paused=2.
 
+    const enum PlayMode{
+        Track=0,
+        Folder=1,
+    }
+
     interface DeviceState {
         track: uint16; //maximum value is 255
         folder: uint8; //maximum value is 127
+        playMode: PlayMode;
         maxTrackInFolder: uint8;
+        previousTrackCompleteResponse: int16;
+        lastTrackEventValue: uint16;
         volume: uint8;
         isPlaying: boolean;
+        nextCommand: number;
     }
 
     let deviceState: DeviceState = undefined;
@@ -104,15 +113,40 @@ namespace hacedores {
         deviceState = {
             track: 1,
             folder: 1,
+            playMode: PlayMode.Track,
             maxTrackInFolder: 255,
             volume: 15,
+            previousTrackCompleteResponse: -1,
+            lastTrackEventValue: 0,
+            nextCommand: 0,
             isPlaying: false
-        }
+        };
 
         basic.pause(500);
         sendCommand(MP3Command.selectDevice());
-        //basic.pause(500);
-        //sendCommand(MP3Command.playTrack(1))
+        basic.pause(500);
+        sendCommand(MP3Command.queryStatus());
+    }
+
+    /**
+    * Play a track
+    * @param track index
+    */
+    //%subcategory="MP3"
+    //%block="play MP3 track %track" 
+    //%track.min=1 track.max=255
+    export function playMP3Track(track: number, folder: number): void {
+        if (!deviceState) {
+            return;
+        }
+
+        playMP3TrackFromFolder(track, folder);
+        while (deviceState.isPlaying) {
+            basic.pause(500);
+            sendCommand(MP3Command.queryStatus());
+            //sendCommand(MP3Command.playTrack(track));
+        }
+
     }
 
     /**
@@ -124,26 +158,29 @@ namespace hacedores {
     //%block="play MP3 track %track | from folder %folder | %repeat"
     //%track.min=1 track.max=255
     //%folder.min=1 folder.max=99
+
     export function playMP3TrackFromFolder(track: number, folder: number): void{
-        //connectMP3(SerialPin.P0,SerialPin.P1)
+        if (!deviceState) {
+           // connectMP3(SerialPin.P0, SerialPin.P1);
+        }
 
         deviceState.folder = Math.min(Math.max(folder,1),99);
         deviceState.track = Math.min(Math.max(track,1), 255);
     
-        basic.pause(500);
-        sendCommand(MP3Command.playTrackFromFolder(track,folder));
+        deviceState.playMode = PlayMode.Track;
+        deviceState.maxTrackInFolder = 255;
+        playTrackOnDevice(deviceState);
+        //basic.pause(500);
+        //sendCommand(MP3Command.playTrackFromFolder(track,folder));
     }
 
-    /**
-     * Play a track
-     * @param track index
-     */
-    //%subcategory="MP3"
-    //%block="play MP3 track %track"
-    //%track.min=1 track.max=255
-    export function playMP3Track(track: number): void {
+    function playTrackOnDevice(targetState: DeviceState): void {
+        deviceState.previousTrackCompleteResponse = -1;
+        deviceState.isPlaying = true;
         basic.pause(500);
-        sendCommand(MP3Command.playTrack(track));
+        sendCommand(MP3Command.playTrackFromFolder(targetState.track, targetState.folder));
+
+        deviceState.lastTrackEventValue = deviceState.track;
     }
 
     /**
@@ -154,6 +191,7 @@ namespace hacedores {
     //%block="set MP3 volume to %volume"
     //%volume.min=0 volume.max=30
     export function setMP3Volume(volume: number): void {
+       // deviceState.volume = volume;
         basic.pause(500);
         sendCommand(MP3Command.setVolume(volume));
     }
@@ -183,14 +221,23 @@ namespace hacedores {
                 sendCommand(MP3Command.decreaseVolume());
                 break;
             case Mp3Command.PLAY_NEXT_TRACK:
-                basic.pause(500);
-                sendCommand(MP3Command.nextTrack());
+                if (deviceState.track < deviceState.maxTrackInFolder) {
+                    deviceState.track += 1;
+                    //basic.pause(500);
+                    //sendCommand(MP3Command.nextTrack());
+                    playTrackOnDevice(deviceState);
+                }
                 break;
             case Mp3Command.PLAY_PREVIOUS_TRACK:
-                basic.pause(500);
-                sendCommand(MP3Command.previousTrack());
+                if (deviceState.track > 1) {
+                    deviceState.track -= 1;
+                    //basic.pause(500);
+                    //sendCommand(MP3Command.previousTrack());
+                }
+                playTrackOnDevice(deviceState);
                 break;
             case Mp3Command.STOP:
+                deviceState.isPlaying = false;
                 basic.pause(500);
                 sendCommand(MP3Command.stop());
                 break;
@@ -215,11 +262,11 @@ namespace hacedores {
     function readResponseStartMP3(): void{
         let start = false;
         while(true){
-            while(serial.available > 0){
-               const byteIndex = serial.read();
+            while (serial.available() > 0){
+                const byteIndex = serial.read();
                if(byteIndex == MP3Command.CommandResponse.RESPONSE_START_BYTE){
                    start = true;
-               } else if(byteIndex == MP3Command.CommandResponse.RESPONSE_VER_BYTE){
+               } else if (start && byteIndex == MP3Command.CommandResponse.RESPONSE_VER_BYTE){
                    return;
                } else{
                    start = false;
@@ -230,9 +277,88 @@ namespace hacedores {
     }
 
     function readSerial(){
-        readSerial.setRxBufferSize(32);
-        
+        serial.setRxBufferSize(32);
+
+        const buffer: Buffer = pins.createBuffer(10);
+
+        buffer.setNumber(NumberFormat.UInt8LE,0, MP3Command.CommandResponse.RESPONSE_START_BYTE);
+        buffer.setNumber(NumberFormat.UInt8LE,1,MP3Command.CommandResponse.RESPONSE_VER_BYTE);
+
+        while(true){
+            readResponseStartMP3();
+
+            let index = 2;
+            while (serial.available() > 0 && index < 10){
+                const data = serial.read();
+                buffer.setNumber(NumberFormat.UInt8LE, index, data);
+                index++;
+            }
+            const response = MP3Command.manageResponse(buffer);
+            handleResponse(response);
+        }
     }
+
+    function handleResponse(response: MP3Command.Response){
+        switch (response.type) {
+            case MP3Command.CommandResponse.TRACK_NOT_FOUND:
+                handleResponseTrackNotFound(response);
+                break;
+            case MP3Command.CommandResponse.TRACK_COMPLETED:
+                handleResponseTrackComplete(response);
+                break;
+            case MP3Command.CommandResponse.PLAYBACK_STATUS:
+                handleResponseStatus(response);
+                break;
+            default:
+               break;
+        }
+    }
+
+    function handleResponseTrackNotFound(response: MP3Command.Response){
+        if (!deviceState) {
+            return;
+        }
+
+        deviceState.isPlaying = false;
+        
+        if(deviceState.track < deviceState.maxTrackInFolder){
+            deviceState.maxTrackInFolder = deviceState.track;
+        }
+
+        if(deviceState.track > 1 && deviceState.playMode == PlayMode.Folder){
+           deviceState.track = 1;
+            playTrackOnDevice(deviceState);
+        }
+    }
+
+    function handleResponseTrackComplete(response: MP3Command.Response){
+        if (!deviceState) {
+            return;
+        }
+
+        if(deviceState.previousTrackCompleteResponse !== response.data){
+            deviceState.lastTrackEventValue = deviceState.track;
+            deviceState.isPlaying = false;
+            if (deviceState.playMode === PlayMode.Folder) {
+                deviceState.track++;
+                playTrackOnDevice(deviceState);
+                basic.pause(500);
+                sendCommand(MP3Command.playTrackFromFolder(deviceState.track, deviceState.folder));
+            }
+
+            deviceState.previousTrackCompleteResponse = response.data;
+        }
+    }
+
+    function handleResponseStatus(response: MP3Command.Response){
+        if(!deviceState){
+            return;
+        }
+        //High data contains file store (TF is 2)
+        //Low data contains playback status: stopped=0, playing=1, paused=2
+        deviceState.isPlaying = (response.data & 0xFF) == 1;
+    }
+
 
     /**
      * Function writes a buffer into serial communication
@@ -246,7 +372,7 @@ namespace hacedores {
 
         export interface Response {
             type: CommandResponse;
-            load?: number;
+            data?: number;
         }
 
         export const enum CommandCode {
@@ -415,9 +541,9 @@ namespace hacedores {
             }
 
             const type = responseBuffer.getNumber(NumberFormat.UInt8LE, 3);
-            const load = (responseBuffer.getNumber(NumberFormat.UInt8LE,5) << 8) | (responseBuffer.getNumber(NumberFormat.UInt8LE,6));
+            const data = (responseBuffer.getNumber(NumberFormat.UInt8LE,5) << 8) | (responseBuffer.getNumber(NumberFormat.UInt8LE,6));
 
-            return {type: type, load: load};
+            return {type: type, data: data};
         }
 
         /**
