@@ -1,10 +1,4 @@
-/***************************************************************************************
- * MP3 BLOCKS NEEDED TO IMPLEMENT QUERIES TO KNOW THE STATE OF THE DEVICE DUE TO
- * RESUME OPTIONS DOESN'T WORK. SIMILAR SITUATION OCCURS TO TOHER FUNCTIONS. COMPLETE 
- * DATASHEET CAN BE CONSULTED IN 
- * https://github.com/0xcafed00d/yx5300/blob/master/docs/datasheet-translated.html
- **************************************************************************************/
- enum servo{
+num servo{
     //% block="°"
 }
 
@@ -123,7 +117,7 @@ namespace hacedores {
             1,
             MP3Command.ResponseType.RESPONSE_VER_BYTE
         );
-
+        let cont = 0;
         while (true) {
             readUntilResponseStart();
 
@@ -146,11 +140,12 @@ namespace hacedores {
                 break;
             case MP3Command.ResponseType.FOLDER_TRACK_COUNT:
                 informationDevice.max_tracks_folder = response.payload;
-                basic.showNumber(informationDevice.max_tracks_folder);
                 break;
-            case MP3Command.ResponseType.PLAYBACK_STATUS:
-               ;
+            case MP3Command.ResponseType.FOLDER_COUNT:
+                informationDevice.max_folder = response.payload;
                 break;
+            case MP3Command.ResponseType.CURRENT_TRACK:
+                informationDevice.current_track = response.payload;
             default:
                 break;
         }
@@ -159,10 +154,13 @@ namespace hacedores {
     interface informationDevice{
         current_track: uint16;
         current_folder: uint8;
+        playFolder: boolean;
+        max_folder: uint8;
         max_tracks_folder: uint16;
     }
 
     let informationDevice : informationDevice = undefined;
+    let max_tracks_folder: number = 0;
     /**
      * Connect to the serial MP3 device
      * @params tx (P0) is the transmitter pin (TX) on Microbit
@@ -175,7 +173,9 @@ namespace hacedores {
 
         informationDevice = {
             current_track: 1,
-            current_folder: 1,
+            current_folder: 0,
+            max_folder: 99,
+            playFolder: false,
             max_tracks_folder: 255
         };
 
@@ -186,22 +186,36 @@ namespace hacedores {
     }
 
     /**microbit-Hacedores
-
+    */
+    
     /**
-     * Plays a track from a Folder
+     * Play track
+     * @params track 
+     */
+    //%subcategory="MP3"
+    //%block="play MP3 track %track"
+    //%track.min=1 track.max=255
+    export function playTrack(track: number): void {
+        informationDevice.current_track = track;
+        informationDevice.playFolder = false;
+        basic.pause(500);
+        sendCommand(MP3Command.playTrack(track));
+    }
+
+    /** Plays a track from a Folder
      * @params track track index, eg:1
      * @params folder folder index, eg:1
      */
     //%subcategory="MP3"
-    //%block="play MP3 track %track | from folder %folder | %repeat"
+    //%block="play MP3 track %track | from folder %folder"
     //%track.min=1 track.max=255
     //%folder.min=1 folder.max=99
-
     export function playMP3TrackFromFolder(track: number, folder: number): void{;
         informationDevice.current_folder = folder;
         informationDevice.current_track = track;
+        informationDevice.playFolder = true;
         basic.pause(500);
-        sendCommand(MP3Command.playTrackFromFolder(track, folder))
+        sendCommand(MP3Command.playTrackFromFolder(track, folder));
         basic.pause(500);
         sendCommand(MP3Command.queryFolderTrackCount(folder));
         readSerial();
@@ -228,28 +242,34 @@ namespace hacedores {
     */
     //%subcategory="MP3"
     //%block="repeat MP3 folder"
-    export function repeatMP3Folder(): void {
+    /*export function repeatMP3Folder(): void {
         let folder = informationDevice.current_folder;
         if (folder < 0 || folder > 30) {
             return;
         }
         basic.pause(500);
         sendCommand(MP3Command.repeatFolder(folder));
-    }
+    }*/
 
     /**
      * Repeat current track 
      * @param track is in range from 0 to 255 
     */
     //%subcategory="MP3"
-    //%block="repeat MP3 current track"
+    //%block="repeat MP3 current track from folder"
     export function repeatMP3CurrentTrack(): void {
-        let track = informationDevice.current_track;
-        if (track < 0 || track > 255) {
+        if(informationDevice.playFolder == true){
+            let track = informationDevice.current_track;
+            if (track < 0 || track > 255) {
+                return;
+            }
+            basic.pause(500);
+            sendCommand(MP3Command.stop());
+            basic.pause(500);
+            sendCommand(MP3Command.playTrack(track));
+        }else{
             return;
         }
-        basic.pause(500);
-        sendCommand(MP3Command.repeatTrack(track));
     }
 
     /**
@@ -278,12 +298,24 @@ namespace hacedores {
                 sendCommand(MP3Command.decreaseVolume());
                 break;
             case Mp3Command.PLAY_NEXT_TRACK:
-                basic.pause(500);
-                sendCommand(MP3Command.nextTrack());
+                if(informationDevice.current_track < informationDevice.max_tracks_folder && informationDevice.playFolder == true){
+                    basic.pause(500);
+                    sendCommand(MP3Command.nextTrack());
+                    informationDevice.current_track += 1;
+                }else{
+                    basic.pause(500);
+                    sendCommand(MP3Command.nextTrack());
+                }
                 break;
             case Mp3Command.PLAY_PREVIOUS_TRACK:
-                basic.pause(500);
-                sendCommand(MP3Command.previousTrack());
+                if (informationDevice.current_track > 1 && informationDevice.playFolder == true) {
+                    basic.pause(500);
+                    sendCommand(MP3Command.previousTrack());
+                    informationDevice.current_track -= 1;
+                }else{
+                    basic.pause(500);
+                    sendCommand(MP3Command.previousTrack());
+                }
                 break;
             case Mp3Command.PAUSE:
                 basic.pause(500);
