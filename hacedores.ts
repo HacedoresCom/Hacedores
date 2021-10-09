@@ -1,8 +1,4 @@
-num servo{
-    //% block="°"
-}
-
- enum UltrasonicUnits {
+enum UltrasonicUnits {
     //% block="cm"
     Centimeters,
     //% block="inches"
@@ -70,7 +66,14 @@ namespace hacedores {
             case UltrasonicUnits.Inches: return Math.idiv(distance, 148);
         }
     }
-    
+
+    /***************************************************************************************
+     * BLOCK TO COMMUNICATE WITH SERVOMOTOR SG-90
+     **************************************************************************************/
+    /**
+     * Control servos
+     */
+
     /***************************************************************************************
      * BLOCK TO COMMUNICATE WITH SERVOMOTOR SG-90
      **************************************************************************************/
@@ -104,6 +107,7 @@ namespace hacedores {
 
     function readSerial() {
         serial.setRxBufferSize(32)
+<<<<<<< HEAD
 
         const buffer: Buffer = pins.createBuffer(10);
 
@@ -160,6 +164,64 @@ namespace hacedores {
     }
 
     let informationDevice : informationDevice = undefined;
+=======
+
+        const buffer: Buffer = pins.createBuffer(10);
+
+        buffer.setNumber(
+            NumberFormat.UInt8LE,
+            0,
+            MP3Command.ResponseType.RESPONSE_START_BYTE
+        );
+        buffer.setNumber(
+            NumberFormat.UInt8LE,
+            1,
+            MP3Command.ResponseType.RESPONSE_VER_BYTE
+        );
+        let cont = 0;
+        while (true) {
+            readUntilResponseStart();
+
+            let bufferIndex = 2;
+            while (serial.available() > 0 && bufferIndex < 10) {
+                const c = serial.read();
+                buffer.setNumber(NumberFormat.UInt8LE, bufferIndex, c);
+                bufferIndex++;
+            }
+
+            const response = MP3Command.decodeResponse(buffer);
+            handleResponse(response);
+        }
+    }
+
+    function handleResponse(response: MP3Command.Response) {
+        switch (response.type) {
+            case MP3Command.ResponseType.TRACK_NOT_FOUND:
+                basic.showNumber(0);
+                break;
+            case MP3Command.ResponseType.FOLDER_TRACK_COUNT:
+                informationDevice.max_tracks_folder = response.payload;
+                break;
+            case MP3Command.ResponseType.FOLDER_COUNT:
+                informationDevice.max_folder = response.payload;
+                break;
+            case MP3Command.ResponseType.CURRENT_TRACK:
+                informationDevice.current_track = response.payload;
+            default:
+                break;
+        }
+    }
+
+    interface informationDevice {
+        current_track: uint16;
+        current_folder: uint8;
+        playFolder: boolean;
+        max_folder: uint8;
+        max_tracks_folder: uint16;
+    }
+
+    let informationDevice: informationDevice = undefined;
+>>>>>>> 18d50bac4456f9e04be494081ebc4bfa24aa3b98
     let max_tracks_folder: number = 0;
     /**
      * Connect to the serial MP3 device
@@ -168,8 +230,13 @@ namespace hacedores {
      */
     //% subcategory="MP3"
     //% block="MP3 device RX to %tx|TX to %rx"
+<<<<<<< HEAD
     export function connectMP3(tx: SerialPin, rx: SerialPin): void{
         serial.redirect(tx,rx,BaudRate.BaudRate9600);
+=======
+    export function connectMP3(tx: SerialPin, rx: SerialPin): void {
+        serial.redirect(tx, rx, BaudRate.BaudRate9600);
+>>>>>>> 18d50bac4456f9e04be494081ebc4bfa24aa3b98
 
         informationDevice = {
             current_track: 1,
@@ -187,7 +254,11 @@ namespace hacedores {
 
     /**microbit-Hacedores
     */
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 18d50bac4456f9e04be494081ebc4bfa24aa3b98
     /**
      * Play track
      * @params track 
@@ -210,7 +281,12 @@ namespace hacedores {
     //%block="play MP3 track %track | from folder %folder"
     //%track.min=1 track.max=255
     //%folder.min=1 folder.max=99
+<<<<<<< HEAD
     export function playMP3TrackFromFolder(track: number, folder: number): void{;
+=======
+    export function playMP3TrackFromFolder(track: number, folder: number): void {
+        ;
+>>>>>>> 18d50bac4456f9e04be494081ebc4bfa24aa3b98
         informationDevice.current_folder = folder;
         informationDevice.current_track = track;
         informationDevice.playFolder = true;
@@ -258,7 +334,11 @@ namespace hacedores {
     //%subcategory="MP3"
     //%block="repeat MP3 current track from folder"
     export function repeatMP3CurrentTrack(): void {
+<<<<<<< HEAD
         if(informationDevice.playFolder == true){
+=======
+        if (informationDevice.playFolder == true) {
+>>>>>>> 18d50bac4456f9e04be494081ebc4bfa24aa3b98
             let track = informationDevice.current_track;
             if (track < 0 || track > 255) {
                 return;
@@ -267,7 +347,11 @@ namespace hacedores {
             sendCommand(MP3Command.stop());
             basic.pause(500);
             sendCommand(MP3Command.playTrack(track));
+<<<<<<< HEAD
         }else{
+=======
+        } else {
+>>>>>>> 18d50bac4456f9e04be494081ebc4bfa24aa3b98
             return;
         }
     }
@@ -287,7 +371,11 @@ namespace hacedores {
     //%block="MP3 functions %command"
     //%track.min=1 track.max=255
     export function runMP3Functions(command: Mp3Command): void {
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> 18d50bac4456f9e04be494081ebc4bfa24aa3b98
         switch (command) {
             case Mp3Command.INCREASE_VOLUME:
                 basic.pause(500);
@@ -298,11 +386,19 @@ namespace hacedores {
                 sendCommand(MP3Command.decreaseVolume());
                 break;
             case Mp3Command.PLAY_NEXT_TRACK:
+<<<<<<< HEAD
                 if(informationDevice.current_track < informationDevice.max_tracks_folder && informationDevice.playFolder == true){
                     basic.pause(500);
                     sendCommand(MP3Command.nextTrack());
                     informationDevice.current_track += 1;
                 }else{
+=======
+                if (informationDevice.current_track < informationDevice.max_tracks_folder && informationDevice.playFolder == true) {
+                    basic.pause(500);
+                    sendCommand(MP3Command.nextTrack());
+                    informationDevice.current_track += 1;
+                } else {
+>>>>>>> 18d50bac4456f9e04be494081ebc4bfa24aa3b98
                     basic.pause(500);
                     sendCommand(MP3Command.nextTrack());
                 }
@@ -312,7 +408,11 @@ namespace hacedores {
                     basic.pause(500);
                     sendCommand(MP3Command.previousTrack());
                     informationDevice.current_track -= 1;
+<<<<<<< HEAD
                 }else{
+=======
+                } else {
+>>>>>>> 18d50bac4456f9e04be494081ebc4bfa24aa3b98
                     basic.pause(500);
                     sendCommand(MP3Command.previousTrack());
                 }
@@ -344,7 +444,7 @@ namespace hacedores {
      * Function writes a buffer into serial communication
      * @param command command is a buffer
      */
-    function sendCommand(command: Buffer): void{
+    function sendCommand(command: Buffer): void {
         serial.writeBuffer(command)
     }
 
@@ -398,7 +498,7 @@ namespace hacedores {
 
         let commandBuffer: Buffer = undefined;
 
-        export function composeSerialCommand(command: CommandCode,dataHigh: number,dataLow: number): Buffer {
+        export function composeSerialCommand(command: CommandCode, dataHigh: number, dataLow: number): Buffer {
             if (!commandBuffer) {
                 commandBuffer = pins.createBuffer(8);
                 commandBuffer.setNumber(NumberFormat.UInt8LE, 0, 0x7e);
@@ -500,7 +600,11 @@ namespace hacedores {
         export function unmute(): Buffer {
             return composeSerialCommand(CommandCode.MUTE, 0x00, 0x00);
         }
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> 18d50bac4456f9e04be494081ebc4bfa24aa3b98
         export function decodeResponse(response: Buffer): Response {
             if (response.length != 10) {
                 return { type: ResponseType.RESPONSE_INVALID };

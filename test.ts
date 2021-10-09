@@ -5,6 +5,6 @@ basic.forever(function () {
         DigitalPin.P1,
         UltrasonicUnits.Centimeters
     )
-    basic.showNumber(distance)
+    //basic.showNumber(distance)
     basic.pause(1000)
 })
