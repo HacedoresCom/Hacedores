@@ -16,13 +16,13 @@ hacedores.ultrasonicSensor(
         UltrasonicUnits.Centimeters
     )
 ```
-###Serial MP3 Player 
+### Serial MP3 Player 
 
-This extension was based on the library of Makerbit MP3 (https://github.com/1010Technologies/pxt-makerbit-mp3) and was modified in some functions.
+This extension was based on the library of [**Makerbit MP3 **](https://github.com/1010Technologies/pxt-makerbit-mp3) and was modified in some functions.
 
-This library was designed to communicate the MicroBit with the Serial MP3 Player by using blocks. This device has high-quality in audio, so that also supports MP3 and WAV file formats.
+This library was designed to communicate the Micro:Bit with the Serial MP3 Player by using blocks. This device has high-quality in audio, so that also supports MP3 and WAV file formats.
 
-Before you can communicate whit this module, the microSD card needs to be formatted as FAT16 or FAT32. The files inside of this microSD card needs following the next pattern:
+Before you can communicate whit this module, the microSD card needs to be formatted as **FAT16** or **FAT32**. The files inside of this microSD card needs following the next pattern:
 
 - First, the folder should be created and named using two-digit numbers as `01`, `02` and so on until `99` that is the maximum value.
 - Second, the track should be named by using three-digit number as `001` followed for a point and the file extension as `001.mp3`,`002.wav` and so on. Maximum number to name the track is `255`, e.g either `255.wav` or `255.mp3`.
