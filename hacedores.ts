@@ -19,8 +19,6 @@ const enum Mp3Command {
     INCREASE_VOLUME,
     //% block="decrease volume"
     DECREASE_VOLUME,
-    //% block="repeat current track"
-    REPEART_CURRENT_TRACK,
     //% block="pause"
     PAUSE,
     //% block="play"

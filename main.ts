@@ -2,7 +2,7 @@ input.onButtonPressed(Button.A, function () {
     hacedores.runMP3Functions(Mp3Command.PLAY_PREVIOUS_TRACK)
 })
 input.onButtonPressed(Button.AB, function () {
-    hacedores.runMP3Functions(Mp3Command.INCREASE_VOLUME)
+    hacedores.repeatMP3CurrentTrack()
 })
 input.onButtonPressed(Button.B, function () {
     hacedores.runMP3Functions(Mp3Command.PLAY_NEXT_TRACK)
