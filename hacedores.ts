@@ -240,24 +240,29 @@ namespace hacedores {
         sendCommand(MP3Command.repeatFolder(folder));
     }*/
 
+
     /**
      * Repeat current track 
      * @param track is in range from 0 to 255 
     */
     //%subcategory="MP3"
-    //%block="repeat MP3 current track from folder"
+    //%block="repeat MP3 current track"
     export function repeatMP3CurrentTrack(): void {
+        let track = informationDevice.current_track;
         if(informationDevice.playFolder == true){
-            let track = informationDevice.current_track;
+            let folder = informationDevice.current_folder;
             if (track < 0 || track > 255) {
                 return;
             }
             basic.pause(500);
             sendCommand(MP3Command.stop());
             basic.pause(500);
-            sendCommand(MP3Command.playTrack(track));
+            sendCommand(MP3Command.playTrackFromFolder(track, folder));
         } else {
-            return;
+            basic.pause(500);
+            sendCommand(MP3Command.stop());
+            basic.pause(500);
+            sendCommand(MP3Command.playTrack(track));
         }
     }
 
