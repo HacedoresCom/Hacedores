@@ -16,13 +16,11 @@ const enum Mp3Command {
     //% block="play previous track"
     PLAY_PREVIOUS_TRACK,
     //% block="increase volume"
-    REPEAT_FOLDER,
-    //% block="repeat folder"
-    REPEART_CURRENT_TRACK,
-    //% block="repeat current track"
     INCREASE_VOLUME,
     //% block="decrease volume"
     DECREASE_VOLUME,
+    //% block="repeat current track"
+    REPEART_CURRENT_TRACK,
     //% block="pause"
     PAUSE,
     //% block="play"
